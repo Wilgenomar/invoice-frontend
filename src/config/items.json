@@ -1,0 +1,5 @@
+[
+  { "title": "Clients", "icon": "mdi-view-dashboard", "path": "/customers" },
+  { "title": "Products", "icon": "mdi-image", "path": "/products" },
+  { "title": "Invoices", "icon": "mdi-help-box", "path": "/invoices" }
+]

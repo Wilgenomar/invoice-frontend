@@ -1,0 +1,6 @@
+[
+    { "text": "Producto", "value": "name" },
+    { "text": "Descripcion", "value": "description" },
+    { "text": "Precio", "value": "price" },
+    { "text": "Acciones", "value": "actions", "sortable": false }
+]

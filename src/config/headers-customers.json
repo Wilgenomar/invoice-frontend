@@ -1,0 +1,8 @@
+[
+    { "text": "Codigo", "value": "id_number" },
+    { "text": "Empresa", "value": "name" },
+    { "text": "Telefono", "value": "phone" },
+    { "text": "Email", "value": "email" },
+    { "text": "Ciudad", "value": "city" },
+    { "text": "Direccion", "value": "address" }
+]
