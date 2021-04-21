@@ -4,6 +4,18 @@
   <v-card-text>
     <v-btn color="primary" to="/customers/add">new client</v-btn>
     <v-data-table :headers="headers" :items="customers" :items-per-page="5" class="elevation-1 mt-5">
+      <template v-slot:[`item.actions`]="{ item }">
+    <v-btn
+    :to="{ name: 'CustomerDetails', params: { customerId: item.id , item} }">
+
+      <v-icon
+        small
+        class="mr-2"
+      >
+        mdi-eye
+      </v-icon>
+      </v-btn>
+    </template>
     </v-data-table>
   </v-card-text>
 </v-card>

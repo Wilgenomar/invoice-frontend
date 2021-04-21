@@ -32,6 +32,12 @@ const routes = [
     path: '/customers/add',
     name: 'AddCustomer',
     component: () => import(/* webpackChunkName: "add-customer" */ '../views/AddCustomer.vue')
+  },
+  {
+    path: '/customer/details/:customerId',
+    name: 'CustomerDetails',
+    component: () => import(/* webpackChunkName: "customers" */ '../views/CustomerDetails.vue'),
+    props: true
   }
 ]
 

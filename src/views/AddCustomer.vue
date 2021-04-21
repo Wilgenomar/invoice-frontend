@@ -95,6 +95,7 @@
       </v-col>
 
     </v-row>
+
     <v-card-actions>
       <v-btn color="primary" @click="save" class="mt-5">Guardar</v-btn>
     </v-card-actions>

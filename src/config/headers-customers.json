@@ -4,5 +4,6 @@
     { "text": "Telefono", "value": "phone" },
     { "text": "Email", "value": "email" },
     { "text": "Ciudad", "value": "city" },
-    { "text": "Direccion", "value": "address" }
+    { "text": "Direccion", "value": "address" },
+    { "text": "Acciones", "value": "actions", "sortable": false }
 ]
