@@ -48,6 +48,7 @@ export default {
     item: {
       type: Object
     }
+
   },
   data () {
     return {

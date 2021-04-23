@@ -1,5 +1,5 @@
 [
-  { "title": "Clients", "icon": "mdi-view-dashboard", "path": "/customers" },
-  { "title": "Products", "icon": "mdi-image", "path": "/products" },
-  { "title": "Invoices", "icon": "mdi-help-box", "path": "/invoices" }
+  { "title": "Clients", "icon": "mdi-laptop-chromebook", "path": "/customers" },
+  { "title": "Products", "icon": "mdi-dropbox", "path": "/products" },
+  { "title": "Invoices", "icon": "mdi-file-document", "path": "/invoices" }
 ]

@@ -1,0 +1,6 @@
+[
+      { "text": "Codigo", "value": "id" },
+      { "text": "Cliente", "value": "customer_id" },
+      { "text": "Fecha", "value": "create_at" },
+      { "text": "Total", "value": "total" }
+]

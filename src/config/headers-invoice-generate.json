@@ -1,0 +1,7 @@
+[
+    { "text": "Producto", "value": "name", "width": "50%"},
+    { "text": "Precio", "value": "price","width": "15%" },
+    { "text": "Cantidad", "value": "quantity", "width": "10%", "aling": "end" },
+    { "text": "Descuento", "value": "discount","width": "10%", "aling": "end"},
+    { "text": "Total Producto", "value": "totalProduct" }
+]

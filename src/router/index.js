@@ -36,8 +36,13 @@ const routes = [
   {
     path: '/customer/details/:customerId',
     name: 'CustomerDetails',
-    component: () => import(/* webpackChunkName: "customers" */ '../views/CustomerDetails.vue'),
+    component: () => import(/* webpackChunkName: "CustomerDetails" */ '../views/CustomerDetails.vue'),
     props: true
+  },
+  {
+    path: '/invoice/generate',
+    name: 'GenerateInvoice',
+    component: () => import(/* webpackChunkName: "GenerateInvoice" */ '../views/GenerateInvoice.vue')
   }
 ]
 

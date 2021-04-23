@@ -3,7 +3,7 @@
     <v-app>
     <v-navigation-drawer v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp" color="teal accent-3" dark app>
       <v-list dense nav>
-        <v-list-item v-for="item in items" :key="item.title" link :to="item.path" >
+        <v-list-item v-for="item in items" :key="item.title" link :to="item .path" >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
