@@ -7,7 +7,8 @@
           <v-card-text>
                 <v-form>
                   <v-text-field
-                    v-model="customer.name"
+                    :value="customer.name | upper"
+                    @input="value => customer.name = value"
                     label="Nombre"
                     placeholder="Example S.A.S"
                     outlined
@@ -142,6 +143,11 @@ export default {
         email: '',
         phone: ''
       }]
+    }
+  },
+  filters: {
+    upper (value) {
+      return value.toUpperCase()
     }
   },
   methods: {

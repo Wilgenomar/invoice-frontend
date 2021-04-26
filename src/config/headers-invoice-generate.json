@@ -1,7 +1,8 @@
 [
-    { "text": "Producto", "value": "name", "width": "50%"},
-    { "text": "Precio", "value": "price","width": "15%" },
-    { "text": "Cantidad", "value": "quantity", "width": "10%", "aling": "end" },
-    { "text": "Descuento", "value": "discount","width": "10%", "aling": "end"},
-    { "text": "Total Producto", "value": "totalProduct" }
+    { "text": "Producto", "value": "name", "width": "8%"},
+    { "text": "Descripcion", "value": "price","width": "10%", "align": "center" },
+    { "text": "Precio", "value": "price","width": "3%", "align": "end" },
+    { "text": "Cantidad", "value": "quantity", "width": "3%", "align": "end" },
+    { "text": "Descuento %", "value": "discount","width": "3%", "align": "end"},
+    { "text": "Total Producto", "value": "totalProduct", "width": "5%", "align": "end" }
 ]
