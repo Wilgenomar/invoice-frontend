@@ -1,5 +1,7 @@
 <template>
-  <v-card>
+<v-row>
+  <v-col cols="12">
+    <v-card>
     <v-card-title>Productos</v-card-title>
     <v-card-text>
         <v-data-table
@@ -12,7 +14,7 @@
             <v-icon small class="mr-2" @click="editProduct(item)" >
               mdi-pencil
             </v-icon>
-            <v-icon small  @click="deleteItem(item)">
+            <v-icon small  @click="dialogDeleteItem(item)">
               mdi-delete
             </v-icon>
           </template>
@@ -56,6 +58,43 @@
       <v-icon>mdi-plus</v-icon>
     </v-btn>
   </v-card>
+  </v-col>
+
+    <v-dialog
+      v-model="dialogDelete"
+      max-width="400"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          ¿Desea eliminar este producto?
+        </v-card-title>
+
+        <v-card-text>
+          Tenga en cuenta que si acepta eliminarlo, este producto sera eliminado de la base de datos y no podra recuperarlo.
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            text
+            @click="dialogDelete = false"
+          >
+            Cancelar
+          </v-btn>
+
+          <v-btn
+            color="pink"
+            text
+            @click="deleteItem(deletedItem)"
+          >
+            Eliminar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+</v-row>
+
 </template>
 
 <script>
@@ -69,6 +108,7 @@ export default {
   },
   data () {
     return {
+      dialogDelete: false,
       products: [],
       headers: headers,
       dialog: false,
@@ -82,11 +122,7 @@ export default {
         description: '',
         price: 0
       },
-      deletedItem: {
-        name: '',
-        description: '',
-        price: 0
-      }
+      deletedItem: {}
     }
   },
   created () {
@@ -121,7 +157,13 @@ export default {
       axios.delete('http://127.0.0.1:3000/products/' + this.deletedIndex.id)
         .then((response) => {
           this.products = response.data
+          this.deletedItem = {}
+          this.dialogDelete = false
         })
+    },
+    dialogDeleteItem (item) {
+      this.dialogDelete = !this.dialogDelete
+      this.deletedItem = item
     }
   }
 }
