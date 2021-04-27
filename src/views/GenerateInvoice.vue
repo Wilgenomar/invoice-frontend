@@ -10,10 +10,11 @@
               outlined
               v-for="(item, i) in products"
               :key="i"
-              @click="addProduct(item)"
+              @click="addToCart(item)"
             >
               <v-list-item-content>
                 <v-list-item-title v-text="item.name"></v-list-item-title>
+                <v-list-item-subtitle class="mt-2"> {{ 'Precio: '+ item.price}} </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
@@ -107,7 +108,6 @@
       </v-row>
 
       <v-data-table
-        class="elevation-1"
         :headers="headers"
         :items="cart"
         :hide-default-footer="true"
@@ -143,46 +143,8 @@
       <v-spacer></v-spacer>
       <v-col cols="2" class="mr-4">
         <v-text-field
-        suffix="Subtotal"
-        v-model="subtotal"
-        reverse
-        prepend-icon="mdi-currency-usd"
-        readonly dense
-        >
-        </v-text-field>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-spacer></v-spacer>
-      <v-col cols="2" class="mr-4">
-        <v-text-field
-        suffix="Descuento"
-        v-model="subtotal"
-        reverse
-        prepend-icon="mdi-currency-usd"
-        readonly dense
-        >
-        </v-text-field>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-spacer></v-spacer>
-      <v-col cols="2" class="mr-4">
-        <v-text-field
-        suffix="IVA"
-        v-model="subtotal"
-        reverse
-        prepend-icon="mdi-currency-usd"
-        readonly
-        dense></v-text-field>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-spacer></v-spacer>
-      <v-col cols="2" class="mr-4">
-        <v-text-field
         suffix="Total"
-        v-model="subtotal"
+        v-model="total"
         reverse
         prepend-icon="mdi-currency-usd"
         readonly dense ></v-text-field>
@@ -192,6 +154,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import headers from '../config/headers-invoice-generate.json'
 import axios from 'axios'
 export default {
@@ -199,7 +162,6 @@ export default {
     return {
       selectedItem: 1,
       select: {},
-      cart: [],
       customers: [],
       products: [],
       headers: headers,
@@ -207,7 +169,7 @@ export default {
         { text: 'Producto', value: 'name' },
         { text: 'Precio', value: 'price' }
       ],
-      subtotal: 0,
+      total: 0,
       dialog: false,
       insertProduct: {},
       totalProduct: 0,
@@ -217,6 +179,7 @@ export default {
       menu: false
     }
   },
+  computed: mapState(['cart']),
   created () {
     this.getCustomers()
     this.getProducts()
@@ -232,33 +195,32 @@ export default {
         this.products = response.data
       })
     },
-    addProduct (product) {
+    addToCart (product) {
       this.insertProduct = {
+        id: product.id,
         name: product.name,
         price: parseInt(product.price),
         quantity: 1,
-        discount: 0,
-        totalProduct: parseInt(product.price)
+        discount: '',
+        iva: parseInt(product.price) * 0.19,
+        subtotal: parseInt(product.price)
       }
-      this.totalProduct = this.insertProduct.totalProduct
-      this.cart.push(this.insertProduct)
-      this.dialog = !this.dialog
+      this.$store.dispatch('addToCart', this.insertProduct)
+      this.dialog = false
+      this.calculateSubtotal()
+    },
+    updateDiscount (item) {
+      this.$store.dispatch('updateDiscount', item)
       this.calculateSubtotal()
     },
     updateQuantity (item) {
-      item.totalProduct = item.quantity * item.price
-      this.totalProduct = item.totalProduct
-      this.updateDiscount(item)
-    },
-    updateDiscount (item) {
-      const descuento = (item.price * item.discount) / 100
-      item.totalProduct = this.totalProduct - descuento * item.quantity
+      this.$store.dispatch('updateQuantity', item)
       this.calculateSubtotal()
     },
     calculateSubtotal () {
-      this.subtotal = 0
-      for (const key in this.cart) {
-        this.subtotal = this.subtotal + this.cart[key].totalProduct
+      this.total = 0
+      for (var key in this.cart) {
+        this.total = this.total + this.cart[key].subtotal
       }
     }
   }

@@ -4,5 +4,6 @@
     { "text": "Precio", "value": "price","width": "3%", "align": "end" },
     { "text": "Cantidad", "value": "quantity", "width": "3%", "align": "end" },
     { "text": "Descuento %", "value": "discount","width": "3%", "align": "end"},
-    { "text": "Total Producto", "value": "totalProduct", "width": "5%", "align": "end" }
+    { "text": "IVA", "value": "iva","width": "3%", "align": "end" },
+    { "text": "Subtotal", "value": "subtotal", "width": "5%", "align": "end" }
 ]

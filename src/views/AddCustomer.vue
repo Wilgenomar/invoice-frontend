@@ -7,10 +7,9 @@
           <v-card-text>
                 <v-form>
                   <v-text-field
-                    :value="customer.name | upper"
-                    @input="value => customer.name = value"
-                    label="Nombre"
-                    placeholder="Example S.A.S"
+                    v-model="customer.name"
+                    label="Identificacion"
+                    placeholder="Numero de registro"
                     outlined
                     dense
                   >
@@ -145,11 +144,6 @@ export default {
       }]
     }
   },
-  filters: {
-    upper (value) {
-      return value.toUpperCase()
-    }
-  },
   methods: {
     save () {
       let custom = null
@@ -178,6 +172,13 @@ export default {
           .then((response) => {
           })
       }
+      if (this.contacts.length > 1) {
+        this.contacts.splice(1)
+      }
+      this.contacts[0].first_name = ''
+      this.contacts[0].last_name = ''
+      this.contacts[0].phone = ''
+      this.contacts[0].email = ''
     }
   }
 }
