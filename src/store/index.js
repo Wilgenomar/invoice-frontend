@@ -13,33 +13,45 @@ export default new Vuex.Store({
     },
     UPDATE_DISCOUNT (state, value) {
       const discount = parseInt(value.discount)
-      const quantity = parseInt(value.quantity)
-      const price = parseInt(value.price)
-
       const index = state.cart.findIndex(x => x.id === value.id)
-      state.cart[index].discount = discount
+      const price = parseInt(value.price)
+      const quantity = parseInt(value.quantity)
+      const ivaProduct = price * 0.19 * quantity
+      const priceProduct = (price * quantity) + ivaProduct
 
-      state.cart[index].discount = discount
-      var discountProduct = (price * discount) / 100
-      const baseIva = (price - discountProduct) * quantity
-      const iva = baseIva * 0.19
-      state.cart[index].iva = iva
-      state.cart[index].subtotal = baseIva + iva
+      if (Number.isNaN(discount)) {
+        state.cart[index].iva = ivaProduct
+        state.cart[index].subtotal = priceProduct
+      } else {
+        state.cart[index].discount = discount
+        var discountProduct = (price * discount) / 100
+        const baseIva = (price - discountProduct) * quantity
+        const iva = baseIva * 0.19
+        const subtotal = baseIva + iva
+        state.cart[index].iva = Math.round(iva * 100) / 100
+        state.cart[index].subtotal = Math.round(subtotal * 100) / 100
+      }
     },
     UPDATE_QUANTITY (state, value) {
-      const discount = parseInt(value.discount)
       const quantity = parseInt(value.quantity)
-      const price = parseInt(value.price)
-
       const index = state.cart.findIndex(x => x.id === value.id)
-      state.cart[index].quantity = quantity
 
-      state.cart[index].discount = discount
-      var discountProduct = (price * discount) / 100
-      const baseIva = (price - discountProduct) * quantity
-      const iva = baseIva * 0.19
-      state.cart[index].iva = iva
-      state.cart[index].subtotal = baseIva + iva
+      if (Number.isNaN(quantity)) {
+        state.cart[index].iva = 0
+        state.cart[index].subtotal = 0
+        state.cart[index].quantity = 1
+      } else {
+        const discount = parseInt(value.discount)
+        const price = parseInt(value.price)
+        state.cart[index].quantity = quantity
+        state.cart[index].discount = discount
+        var discountProduct = (price * discount) / 100
+        const baseIva = (price - discountProduct) * quantity
+        const iva = baseIva * 0.19
+        const subtotal = baseIva + iva
+        state.cart[index].iva = Math.round(iva * 100) / 100
+        state.cart[index].subtotal = Math.round(subtotal * 100) / 100
+      }
     }
   },
   actions: {

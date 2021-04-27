@@ -3,9 +3,11 @@
     <v-card-title color="primary">Generar factura</v-card-title>
     <v-card-text>
       <v-dialog v-model="dialog" width="500">
-        <v-list rounded>
+        <v-card>
+          <v-card-text>
+            <v-list rounded>
           <v-subheader>Seleccione un producto</v-subheader>
-          <v-list-item-group v-model="selectedItem" color="primary">
+          <v-list-item-group color="primary">
             <v-list-item
               outlined
               v-for="(item, i) in products"
@@ -19,6 +21,8 @@
             </v-list-item>
           </v-list-item-group>
         </v-list>
+          </v-card-text>
+        </v-card>
       </v-dialog>
       <v-row>
         <v-col cols="4">
@@ -27,6 +31,7 @@
             label="Seleccione un cliente"
             :items="customers"
             item-text="name"
+            item-value="id_number"
             outlined
             dense
             placeholder="Seleccione una empresa"
@@ -160,8 +165,9 @@ import axios from 'axios'
 export default {
   data () {
     return {
-      selectedItem: 1,
-      select: {},
+      select: {
+        name: ''
+      },
       customers: [],
       products: [],
       headers: headers,
@@ -201,9 +207,9 @@ export default {
         name: product.name,
         price: parseInt(product.price),
         quantity: 1,
-        discount: '',
+        discount: 0,
         iva: parseInt(product.price) * 0.19,
-        subtotal: parseInt(product.price)
+        subtotal: parseInt(product.price) * 1.19
       }
       this.$store.dispatch('addToCart', this.insertProduct)
       this.dialog = false
