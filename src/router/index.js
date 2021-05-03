@@ -43,6 +43,11 @@ const routes = [
     path: '/invoice/generate',
     name: 'GenerateInvoice',
     component: () => import(/* webpackChunkName: "GenerateInvoice" */ '../views/GenerateInvoice.vue')
+  },
+  {
+    path: '*',
+    name: 'PageNotFound',
+    component: () => import(/* webpackChunkName: "GenerateInvoice" */ '../components/PageNotFound.vue')
   }
 ]
 
