@@ -28,7 +28,7 @@
                       label="Precio"
                       type="number"
                       placeholder="Solo numeros"
-                      :rules="rulesName"
+                      :rules="rulesPrice"
                       outlined
                     ></v-text-field>
                   </v-form>
@@ -67,7 +67,10 @@ export default {
   },
   data () {
     return {
-      rulesName: [v => !!v || 'Campo obligatorio'],
+      rulesName: [v => !!v || 'Campo obligatorio',
+        v => (v && v.length >= 3) || 'El nombre debe tener minimo 3 caracteres'],
+      rulesPrice: [v => !!v || 'Campo obligatorio',
+        v => v ^ [1 - 9][0 - 9] || 'El precio debe ser mayor a 0'],
       valid: false
     }
   },
