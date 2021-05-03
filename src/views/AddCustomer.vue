@@ -5,11 +5,12 @@
         <v-card class="ml-3">
           <v-card-title>Informacion basica</v-card-title>
           <v-card-text>
-                <v-form>
+                <v-form ref="form" :v-model="valid">
                   <v-text-field
                     v-model="customer.name"
                     label="Identificacion"
                     placeholder="Numero de registro"
+                    :rules="requireField"
                     outlined
                     dense
                   >
@@ -28,6 +29,7 @@
                     v-model="customer.email"
                     label="Correo electronico"
                     placeholder="example@example.com"
+                    :rules="emailRules"
                     outlined
                     dense
                   >
@@ -37,6 +39,7 @@
                     v-model="customer.phone"
                     label="Telefono"
                     placeholder="123456"
+                    :rules="requireField"
                     outlined
                     dense
                   >
@@ -112,6 +115,11 @@ export default {
   },
   data () {
     return {
+      requireField: [v => !!v || 'Campo obligatorio'],
+      emailRules: [
+        v => !!v || 'E-mail es requerido',
+        v => /.+@.+\..+/.test(v) || 'E-mail debe ser válido'
+      ],
       customer: {
         name: '',
         id_number: '',
@@ -141,11 +149,15 @@ export default {
         last_name: '',
         email: '',
         phone: ''
-      }]
+      }],
+      valid: false
     }
   },
   methods: {
     save () {
+      if (!this.$refs.form.validate()) {
+        return
+      }
       let custom = null
       axios.post('http://127.0.0.1:3000/customers', this.customer)
         .then((response) => {
