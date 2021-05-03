@@ -1,9 +1,10 @@
 [
     { "text": "Producto", "value": "name", "width": "8%"},
-    { "text": "Descripcion", "value": "price","width": "10%", "align": "center" },
+    { "text": "Descripcion", "value": "description","width": "10%", "align": "center" },
     { "text": "Precio", "value": "price","width": "3%", "align": "end" },
     { "text": "Cantidad", "value": "quantity", "width": "3%", "align": "end" },
     { "text": "Descuento %", "value": "discount","width": "3%", "align": "end"},
     { "text": "IVA", "value": "iva","width": "3%", "align": "end" },
-    { "text": "Subtotal", "value": "subtotal", "width": "5%", "align": "end" }
+    { "text": "Total linea", "value": "subtotal", "width": "5%", "align": "end" },
+    { "text": " ", "value": "action","width": "1%", "align": "end" }
 ]
