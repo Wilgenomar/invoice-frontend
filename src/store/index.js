@@ -9,59 +9,42 @@ export default new Vuex.Store({
   },
   mutations: {
     ADD_TO_CART (state, value) {
-      state.cart.push(value)
-    },
-    UPDATE_DISCOUNT (state, value) {
-      const discount = parseInt(value.discount)
-      const index = state.cart.findIndex(x => x.id === value.id)
-      const price = parseInt(value.price)
-      const quantity = parseInt(value.quantity)
-      const ivaProduct = price * 0.19 * quantity
-      const priceProduct = (price * quantity) + ivaProduct
-
-      if (Number.isNaN(discount)) {
-        state.cart[index].iva = ivaProduct
-        state.cart[index].subtotal = priceProduct
+      const index = state.cart.find(x => x.id === value.id)
+      if (index) {
+        const indice = state.cart.findIndex(x => x.id === value.id)
+        console.log(!index)
+        state.cart[indice].quantity += 1
+        state.cart[indice].subtotal += state.cart[indice].finalPrice
+        state.cart[indice].iva += state.cart[indice].ivaProduct
       } else {
-        if (Number.isNaN(quantity)) {
-          state.cart[index].iva = 0
-          state.cart[index].subtotal = 0
-        } else {
-          state.cart[index].discount = discount
-          var discountProduct = (price * discount) / 100
-          const baseIva = (price - discountProduct) * quantity
-          const iva = baseIva * 0.19
-          const subtotal = baseIva + iva
-          state.cart[index].iva = Math.round(iva * 100) / 100
-          state.cart[index].subtotal = Math.round(subtotal * 100) / 100
-        }
+        state.cart.push(value)
       }
     },
-    UPDATE_QUANTITY (state, value) {
-      const price = parseInt(value.price)
-      const discount = parseInt(value.discount)
-      const quantity = parseInt(value.quantity)
-      const ivaProduct = price * 0.19 * quantity
-      const priceProduct = (price * quantity) + ivaProduct
+    REMOVE_TO_CART (state, value) {
       const index = state.cart.findIndex(x => x.id === value.id)
-
-      if (Number.isNaN(quantity)) {
-        state.cart[index].iva = 0
-        state.cart[index].subtotal = 0
-      } else {
-        if (Number.isNaN(discount)) {
-          state.cart[index].iva = ivaProduct
-          state.cart[index].subtotal = priceProduct
+      state.cart.splice(index, 1)
+    },
+    UPDATE_ITEM (state, value) {
+      const index = state.cart.findIndex(x => x.id === value.id)
+      let discount
+      if (parseFloat(value.quantity)) {
+        if (parseFloat(value.discount)) {
+          discount = parseInt(value.discount) / 100
         } else {
-          state.cart[index].quantity = quantity
-          state.cart[index].discount = discount
-          var discountProduct = (price * discount) / 100
-          const baseIva = (price - discountProduct) * quantity
-          const iva = baseIva * 0.19
-          const subtotal = baseIva + iva
-          state.cart[index].iva = Math.round(iva * 100) / 100
-          state.cart[index].subtotal = Math.round(subtotal * 100) / 100
+          discount = 0
         }
+        const price = parseFloat(value.price) - (parseFloat(value.price) * discount)
+        const quantity = parseInt(value.quantity)
+        const iva = price * 0.19
+        const finalPrice = price + iva
+        state.cart[index].quantity = quantity
+        state.cart[index].subtotal = quantity * finalPrice
+        state.cart[index].finalPrice = finalPrice
+        state.cart[index].ivaProduct = iva
+        state.cart[index].iva = quantity * iva
+      } else {
+        state.cart[index].subtotal = 0
+        state.cart[index].iva = 0
       }
     }
   },
@@ -69,11 +52,11 @@ export default new Vuex.Store({
     addToCart ({ commit }, product) {
       commit('ADD_TO_CART', product)
     },
-    updateQuantity ({ commit }, product) {
-      commit('UPDATE_QUANTITY', product)
+    removeToCart ({ commit }, product) {
+      commit('REMOVE_TO_CART', product)
     },
-    updateDiscount ({ commit }, product) {
-      commit('UPDATE_DISCOUNT', product)
+    updateItem ({ commit }, product) {
+      commit('UPDATE_ITEM', product)
     }
   },
   modules: {

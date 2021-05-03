@@ -2,41 +2,19 @@
   <v-card >
     <v-card-title color="primary">Generar factura</v-card-title>
     <v-card-text>
-      <v-dialog v-model="dialog" width="500">
-        <v-card>
-          <v-card-text>
-            <v-list rounded>
-          <v-subheader>Seleccione un producto</v-subheader>
-          <v-list-item-group color="primary">
-            <v-list-item
-              outlined
-              v-for="(item, i) in products"
-              :key="i"
-              @click="addToCart(item)"
-            >
-              <v-list-item-content>
-                <v-list-item-title v-text="item.name"></v-list-item-title>
-                <v-list-item-subtitle class="mt-2"> {{ 'Precio: '+ item.price}} </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
       <v-row>
-        <v-col cols="4">
-          <v-combobox
+        <v-col cols="6">
+          <v-autocomplete
             v-model="select"
-            label="Seleccione un cliente"
             :items="customers"
-            item-text="name"
-            item-value="id_number"
             outlined
             dense
-            placeholder="Seleccione una empresa"
+            label="Seleccione un cliente"
+            item-text="name"
+            return-object
+            :search-input.sync="searchCustomer"
           >
-          </v-combobox>
+          </v-autocomplete>
         </v-col>
         <v-col cols="2">
           <v-menu
@@ -62,6 +40,8 @@
             <v-date-picker
               v-model="invoiceDate"
               @input="menu = false"
+              :min="minDate"
+              :max="minDate"
             ></v-date-picker>
           </v-menu>
         </v-col>
@@ -89,16 +69,44 @@
             <v-date-picker
               v-model="dueDate"
               @input="menu2 = false"
+              :min="minDate"
             ></v-date-picker>
           </v-menu>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col>
-          <v-btn color="pink" dark top right fab @click="dialog = !dialog">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
+      <v-row v-if="!isObjEmpty(select)">
+        <v-col cols="3">
+            <p> <b>Cliente: </b> {{select.name }}</p>
+            <p> <b>NIT: </b> {{select.id_number }}</p>
+            <p> <b>Cliente: </b> {{select.postal_code }}</p>
         </v-col>
+        <v-col cols="3">
+            <p> <b>Email: </b>  {{select.email }}</p>
+            <p> <b>Telefono: </b> {{select.phone }}</p>
+            <p> <b>Website: </b> {{select.website }}</p>
+        </v-col>
+        <v-col cols="3" >
+            <p> <b>Departamento: </b>  {{select.state }}</p>
+            <p> <b>Ciudad: </b> {{select.city }}</p>
+            <p> <b>Direccion: </b> {{select.address }}</p>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="4" class="d-flex align-end">
+          <v-autocomplete
+          v-model="selectProduct"
+          :items="products"
+          item-text="name"
+          label="Seleccione un producto"
+          :search-input.sync="searchProduct"
+          return-object
+          outlined
+          dense
+          @change="addToCart(selectProduct)"
+          >
+          </v-autocomplete>
+        </v-col>
+        <v-spacer></v-spacer>
         <v-col cols="1">
           <v-text-field
             label="Descuento"
@@ -118,43 +126,91 @@
         :hide-default-footer="true"
         dense
       >
-        <template v-slot:[`item.quantity`]="{ item }" v-slot:>
+        <template v-slot:[`item.price`]="{item}">
+          {{item.price | currency}}
+        </template>
+        <template v-slot:[`item.quantity`]="{ item }">
           <v-spacer></v-spacer>
           <v-text-field
             v-model="item.quantity"
-            dense
-            @input="updateQuantity(item)"
+            @input="updateItem(item)"
             type="number"
             reverse
             class="styled-input mt-3"
+            dense
           >
           </v-text-field>
         </template>
 
-        <template v-slot:[`item.discount`]="{ item }" v-slot:>
+        <template v-slot:[`item.discount`]="{ item }">
           <v-text-field
             v-model="item.discount"
             dense
-            @input="updateDiscount(item)"
+            @input="updateItem(item)"
             type="number"
             reverse
             class="styled-input mt-3"
           >
           </v-text-field>
         </template>
+        <template v-slot:[`item.iva`]="{item}">
+          {{item.iva | currency}}
+        </template>
+        <template v-slot:[`item.subtotal`]="{item}">
+          {{item.subtotal | currency}}
+        </template>
+        <template v-slot:[`item.action`]="{item}">
+            <v-icon small @click="removeToCart(item)" >
+              mdi-delete
+            </v-icon>
+          </template>
       </v-data-table>
     </v-card-text>
     <v-row>
       <v-spacer></v-spacer>
-      <v-col cols="2" class="mr-4">
+      <v-col cols="3" class="mr-5 pr-16">
         <v-text-field
-        suffix="Total"
-        v-model="total"
-        reverse
-        prepend-icon="mdi-currency-usd"
-        readonly dense ></v-text-field>
+          suffix="Subtotal"
+          :value="subtotal | currency"
+          class="mr-5"
+          prepend-icon="mdi-currency-usd"
+          outlined
+          reverse
+          readonly
+          dense
+          full-width
+        >
+        </v-text-field>
+        <v-text-field
+          suffix="IVA"
+          :value="iva | currency"
+          class="mr-5"
+          prepend-icon="mdi-currency-usd"
+          outlined
+          reverse
+          readonly
+          dense
+          full-width
+        >
+        </v-text-field>
+        <v-text-field
+          suffix="Total"
+          :value="total | currency"
+          class="mr-5"
+          prepend-icon="mdi-currency-usd"
+          outlined
+          reverse
+          readonly
+          dense
+          full-width
+        >
+        </v-text-field>
       </v-col>
     </v-row>
+    <v-card-actions class="d-flex justify-center align-center ma-5">
+      <v-btn color="error" class="ma-2">Cancelar</v-btn>
+      <v-btn color="success" class="ma-2">Facturar</v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -165,69 +221,104 @@ import axios from 'axios'
 export default {
   data () {
     return {
-      select: {
-        name: ''
-      },
+      select: {},
+      selectProduct: {},
+      searchCustomer: '',
+      searchProduct: '',
       customers: [],
       products: [],
       headers: headers,
-      headerss: [
-        { text: 'Producto', value: 'name' },
-        { text: 'Precio', value: 'price' }
-      ],
+      subtotal: 0,
       total: 0,
-      dialog: false,
+      iva: 0,
       insertProduct: {},
       totalProduct: 0,
       invoiceDate: new Date().toISOString().substr(0, 10),
       dueDate: new Date().toISOString().substr(0, 10),
+      minDate: new Date().toISOString().substr(0, 10),
       menu2: false,
       menu: false
     }
   },
+  filters: {
+    currency (value) {
+      const val = (value / 1).toFixed(2).replace('.', ',')
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    }
+  },
+  watch: {
+    searchCustomer (val) {
+      if (val) {
+        if (val.length > 3) {
+          this.getCustomers(val)
+        }
+      } else {
+        this.customers = []
+      }
+    },
+    searchProduct (val) {
+      if (val) {
+        if (val.length > 3) {
+          this.getProducts(val)
+        }
+      } else {
+        this.products = []
+      }
+    }
+  },
   computed: mapState(['cart']),
   created () {
-    this.getCustomers()
     this.getProducts()
   },
   methods: {
-    getCustomers () {
-      axios.get('http://127.0.0.1:3000/customers').then((response) => {
+    getCustomers (select) {
+      axios.get(`http://127.0.0.1:3000/customers/search?search_query=${select}`).then((response) => {
         this.customers = response.data
       })
     },
-    getProducts () {
-      axios.get('http://127.0.0.1:3000/products').then((response) => {
+    isObjEmpty (obj) {
+      return Object.keys(obj).length === 0
+    },
+    getProducts (selectProduct) {
+      axios.get(`http://127.0.0.1:3000/products/search?search_query=${selectProduct}`).then((response) => {
         this.products = response.data
       })
     },
     addToCart (product) {
-      this.insertProduct = {
-        id: product.id,
-        name: product.name,
-        price: parseInt(product.price),
-        quantity: 1,
-        discount: 0,
-        iva: parseInt(product.price) * 0.19,
-        subtotal: parseInt(product.price) * 1.19
+      if (product) {
+        this.insertProduct = {
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          price: parseInt(product.price),
+          quantity: 1,
+          discount: 0,
+          iva: parseFloat(product.price) * 0.19,
+          ivaProduct: parseFloat(product.price) * 0.19,
+          finalPrice: parseFloat(product.price) * 1.19,
+          subtotal: parseInt(product.price) * 1.19
+        }
+        this.$store.dispatch('addToCart', this.insertProduct)
+        this.calculateTotal()
       }
-      this.$store.dispatch('addToCart', this.insertProduct)
-      this.dialog = false
-      this.calculateSubtotal()
     },
-    updateDiscount (item) {
-      this.$store.dispatch('updateDiscount', item)
-      this.calculateSubtotal()
+    removeToCart (item) {
+      this.$store.dispatch('removeToCart', item)
+      this.calculateTotal()
     },
-    updateQuantity (item) {
-      this.$store.dispatch('updateQuantity', item)
-      this.calculateSubtotal()
+    updateItem (item) {
+      this.$store.dispatch('updateItem', item)
+      this.calculateTotal()
     },
-    calculateSubtotal () {
+    calculateTotal () {
+      this.subtotal = 0
+      this.iva = 0
       this.total = 0
       for (var key in this.cart) {
-        this.total = this.total + this.cart[key].subtotal
+        this.iva += this.cart[key].iva
+        this.total += this.cart[key].subtotal
       }
+      this.subtotal = this.total - this.iva
     }
   }
 }
