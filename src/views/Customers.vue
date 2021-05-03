@@ -7,13 +7,30 @@
         <v-btn color="primary" to="/customers/add">new client</v-btn>
         <v-data-table :headers="headers" :items="customers" :items-per-page="5" class="elevation-1 mt-5">
           <template v-slot:[`item.actions`]="{ item }">
-            <v-icon small>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+              <v-icon small
+              v-bind="attrs"
+              v-on="on">
               mdi-pencil
-            </v-icon>
-            <v-icon small  @click="dialogDeleteItem(item)">
-              mdi-delete
-            </v-icon>
-            <v-btn
+              </v-icon>
+              </template>
+              <span>Editar cliente</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+              <v-icon small
+              v-bind="attrs"
+              v-on="on"
+              @click="dialogDeleteItem(item)">
+                mdi-delete
+              </v-icon>
+              </template>
+              <span>Eliminar cliente</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+              <v-btn
             :to="{ name: 'CustomerDetails', params: { customerId: item.id, item} }"
             icon
             small
@@ -21,10 +38,15 @@
             <v-icon
             small
             class="mr-2"
+            v-bind="attrs"
+            v-on="on"
             >
             mdi-eye
             </v-icon>
             </v-btn>
+            </template>
+              <span>Ver informacion</span>
+            </v-tooltip>
         </template>
         </v-data-table>
       </v-card-text>
