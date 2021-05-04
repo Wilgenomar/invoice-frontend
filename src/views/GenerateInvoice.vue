@@ -70,25 +70,26 @@
               v-model="dueDate"
               @input="menu2 = false"
               :min="minDate"
+              :max="maxDate"
             ></v-date-picker>
           </v-menu>
         </v-col>
       </v-row>
       <v-row v-if="!isObjEmpty(select)">
         <v-col cols="3">
-            <p> <b>Cliente: </b> {{select.name }}</p>
+            <p> <b>Cliente: </b> {{select.name | capitalizeWords}}</p>
             <p> <b>NIT: </b> {{select.id_number }}</p>
-            <p> <b>Cliente: </b> {{select.postal_code }}</p>
+            <p> <b>Codigo postal: </b> {{select.postal_code }}</p>
         </v-col>
         <v-col cols="3">
-            <p> <b>Email: </b>  {{select.email }}</p>
+            <p> <b>Email: </b>  {{select.email | lower }}</p>
             <p> <b>Telefono: </b> {{select.phone }}</p>
-            <p> <b>Website: </b> {{select.website }}</p>
+            <p> <b>Website: </b> {{select.website | lower }}</p>
         </v-col>
         <v-col cols="3" >
-            <p> <b>Departamento: </b>  {{select.state }}</p>
-            <p> <b>Ciudad: </b> {{select.city }}</p>
-            <p> <b>Direccion: </b> {{select.address }}</p>
+            <p> <b>Departamento: </b>  {{select.state | capitalize }}</p>
+            <p> <b>Ciudad: </b> {{select.city | capitalizeWords }}</p>
+            <p> <b>Direccion: </b> {{select.address | lower }}</p>
         </v-col>
       </v-row>
       <v-row>
@@ -236,6 +237,7 @@ export default {
       invoiceDate: new Date().toISOString().substr(0, 10),
       dueDate: new Date().toISOString().substr(0, 10),
       minDate: new Date().toISOString().substr(0, 10),
+      maxDate: new Date(),
       menu2: false,
       menu: false
     }
@@ -244,6 +246,20 @@ export default {
     currency (value) {
       const val = (value / 1).toFixed(2).replace('.', ',')
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    upper (value) {
+      return value.toUpperCase()
+    },
+    capitalizeWords (value) {
+      value.toString()
+      return value.replace(/\b\w/g, l => l.toUpperCase())
+    },
+    capitalize (value) {
+      value = value.toString()
+      return value.charAt(0).toUpperCase() + value.slice(1)
+    },
+    lower (value) {
+      return value.toLowerCase()
     }
   },
   watch: {
@@ -269,6 +285,12 @@ export default {
   computed: mapState(['cart']),
   created () {
     this.getProducts()
+    this.maxDate.setDate(this.maxDate.getDate() + 30)
+    this.maxDate = new Date(this.maxDate).toISOString().substr(0, 10)
+    console.log(this.maxDate)
+    console.log(this.minDate)
+  },
+  mounted () {
   },
   methods: {
     getCustomers (select) {

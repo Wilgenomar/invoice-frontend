@@ -180,17 +180,12 @@ export default {
     addContact (id) {
       for (var item in this.contacts) {
         this.contacts[item].customer_id = id
-        axios.post('http://127.0.0.1:3000/contacts', this.contacts[item])
-          .then((response) => {
-          })
       }
-      if (this.contacts.length > 1) {
-        this.contacts.splice(1)
-      }
-      this.contacts[0].first_name = ''
-      this.contacts[0].last_name = ''
-      this.contacts[0].phone = ''
-      this.contacts[0].email = ''
+      axios.post('http://127.0.0.1:3000/contacts', this.contacts)
+        .then((response) => {
+          console.log(response)
+        })
+      this.contacts = [{ first_name: '', last_name: '', email: '', phone: '', customer_id: '' }]
     }
   }
 }
